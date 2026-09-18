@@ -5,9 +5,6 @@ def hidden():
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        [data-testid="stToolbar"] {
-            display: none;
-        }
+        [data-testid="stToolbarActions"], [data-testid="stAppDeployButton"] {display: none;}
     </style>
     """, unsafe_allow_html=True)
-    
