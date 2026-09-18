@@ -1,0 +1,21 @@
+[theme]
+base = "light"
+primaryColor = "#001059"
+backgroundColor = "#F4F6FB"
+secondaryBackgroundColor = "#E8ECF6"
+textColor = "#0B1542"
+linkColor = "#0077B6"
+borderColor = "#D6DCEB"
+baseRadius = "10px"
+font = "Lexend:https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+headingFont = "Lexend:https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+
+[theme.sidebar]
+backgroundColor = "#001059"
+secondaryBackgroundColor = "#0B1D78"
+textColor = "#E6EAFF"
+primaryColor = "#44EE67"
+borderColor = "#1A2A85"
+
+[client]
+toolbarMode = "minimal"
