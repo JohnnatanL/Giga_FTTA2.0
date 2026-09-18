@@ -3,7 +3,7 @@ from controller.login import autenticar_usuario
 from controller.user_control import alterar_senha
 from controller.hidden import hidden
 from time import sleep
-from stylo.tema import aplicar_tema, hero_fibra, LOGO_POSITIVO
+from stylo.tema import aplicar_tema, hero_fibra, LOGO_NEGATIVO
 
 
 def tela_login():
@@ -26,7 +26,7 @@ def tela_login():
         )
 
     with form:
-        st.image(LOGO_POSITIVO, width=170)
+        st.image(LOGO_NEGATIVO, width=170)
         st.markdown("### Entrar no portal")
         st.caption("Use o usuário e a senha fornecidos pelo planejamento.")
         with st.form("login_form", border=False):

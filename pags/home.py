@@ -25,7 +25,7 @@ hero_fibra(
 ATALHOS = {
     "forms": ("pags/forms_consultor.py", "Registrar atividade", "Visita, ficha, lead e plantão", "📋"),
     "relat": ("pags/relat_gestor.py", "Ver relatórios", "Ações do mês e ficha do condomínio", "📊"),
-    "contatos": ("pags/contatos.py", "Contatos de condomínios", "Síndicos, administradoras e filtros", "📇"),
+    "contatos": ("pags/contatos.py", "Contatos", "Síndicos, administradoras e filtros", "📇"),
     "gerenciar": ("pags/gerenciar.py", "Gerenciar", "Carteiras do mês e acessos da equipe", "⚙️"),
 }
 POR_PERFIL = {

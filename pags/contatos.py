@@ -5,7 +5,7 @@ from controller.hidden import hidden
 from stylo.tema import aplicar_tema, CSS_CONTATOS
 
 st.set_page_config(
-    page_title="Contatos de Condomínios",
+    page_title="Contatos",
     page_icon="📇",
     layout="wide",
 )

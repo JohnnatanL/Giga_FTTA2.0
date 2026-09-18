@@ -8,7 +8,7 @@ forms_consultor = st.Page("pags/forms_consultor.py", title="Forms", icon="📋",
 gerenciar = st.Page("pags/gerenciar.py", title="Gerenciar", icon="⚙️")
 rel_muralha = st.Page("pags/vendas_du.py", title="Relatório - Projeto Muralha", icon="🎯")
 rel_gestor = st.Page("pags/relat_gestor.py", title="Relatórios", icon="📊")
-contatos = st.Page("pags/contatos.py", title="Contatos de Condomínios", icon="📇")
+contatos = st.Page("pags/contatos.py", title="Contatos", icon="📇")
 
 def main():
     if st.session_state.get("authenticated"):
