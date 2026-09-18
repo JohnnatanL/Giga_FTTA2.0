@@ -7,12 +7,11 @@ from stylo.tema import aplicar_tema, hero_fibra, LOGO_POSITIVO
 
 
 def tela_login():
-    st.set_page_config(page_title="Entrar · Portal Alto Valor", layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="Entrar · Portal Alto Valor", layout="wide", initial_sidebar_state="auto")
     hidden()
     aplicar_tema("login")
     st.markdown(
-        "<style>[data-testid='stSidebar'],[data-testid='stSidebarCollapsedControl']{display:none}"
-        "[data-testid='stMainBlockContainer']{padding-top:3rem}</style>",
+        "<style>[data-testid='stMainBlockContainer']{padding-top:3rem}</style>",
         unsafe_allow_html=True,
     )
 

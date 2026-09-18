@@ -63,10 +63,18 @@ html, body, .stApp, [class*="st-"], button, input, textarea, select{
   font-family:'Lexend', system-ui, sans-serif !important;
   font-feature-settings:"tnum" 1;
 }
+/* ícones do Streamlit usam fonte própria (ligaduras): não sobrescrever */
+[data-testid="stIconMaterial"], span[translate="no"], .material-symbols-rounded{
+  font-family:'Material Symbols Rounded' !important; font-feature-settings:"liga" 1 !important;
+}
 .stApp{ background:var(--papel); color:var(--tinta); }
 
 /* chrome do Streamlit */
-#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{ display:none !important; }
+#MainMenu, footer, [data-testid="stDecoration"], [data-testid="stToolbarActions"], [data-testid="stAppDeployButton"]{ display:none !important; }
+/* botão de abrir/fechar a sidebar sempre visível */
+[data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapsedControl"], [data-testid="stSidebarCollapseButton"]{
+  display:flex !important; visibility:visible !important; }
+[data-testid="stExpandSidebarButton"] svg, [data-testid="stSidebarCollapsedControl"] svg{ color:var(--noite) !important; }
 header[data-testid="stHeader"]{ background:transparent; }
 [data-testid="stMainBlockContainer"]{ padding-top:1.4rem; padding-bottom:4rem; max-width:1320px; }
 
@@ -309,7 +317,15 @@ def _movimento(pagina: str):
 
 def aplicar_tema(pagina: str, animar: bool = True):
     """Aplica CSS, logo e (opcional) a entrada animada. Chamar logo após set_page_config."""
+    if st.session_state.get("authenticated"):
+        # o login abre com a sidebar recolhida; depois de entrar ela volta aberta
+        st.set_page_config(initial_sidebar_state="expanded")
     st.markdown(_CSS, unsafe_allow_html=True)
+    if st.session_state.get("authenticated"):
+        st.markdown(
+            "<style>[data-testid='stSidebar']{display:flex !important;visibility:visible !important}</style>",
+            unsafe_allow_html=True,
+        )
     st.logo(LOGO_NEGATIVO, size="large", icon_image=LOGO_NEGATIVO)
     if st.session_state.get("authenticated"):
         with st.sidebar:
