@@ -26,12 +26,12 @@ ATALHOS = {
     "forms": ("pags/forms_consultor.py", "Registrar atividade", "Visita, ficha, lead e plantão", "📋"),
     "relat": ("pags/relat_gestor.py", "Ver relatórios", "Ações do mês e ficha do condomínio", "📊"),
     "contatos": ("pags/contatos.py", "Contatos de condomínios", "Síndicos, administradoras e filtros", "📇"),
-    "users": ("pags/gerenc_users.py", "Gerenciar usuários", "Criar, editar, excluir e resetar senha", "👥"),
+    "gerenciar": ("pags/gerenciar.py", "Gerenciar", "Carteiras do mês e acessos da equipe", "⚙️"),
 }
 POR_PERFIL = {
-    "admin": ["forms", "relat", "contatos", "users"],
-    "planejamento": ["relat", "contatos", "users"],
-    "gestao": ["forms", "relat", "contatos"],
+    "admin": ["forms", "relat", "contatos", "gerenciar"],
+    "planejamento": ["relat", "contatos", "gerenciar"],
+    "gestao": ["forms", "relat", "contatos", "gerenciar"],
     "consultor": ["forms", "relat"],
 }
 
