@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime as dt
 from auth import conecta_databricks, conecta_supabase
 import streamlit as st
 from controller.controller import (
@@ -109,19 +110,19 @@ from
 (
 select id_condominio, dt_inicio as data, usuario as Executivo, 'Visita' as Tipo
 from tbvisita
-where dt_inicio between %s and %s
+where dt_inicio >= %s and dt_inicio < %s
 union
 select id_condominio, dt_inicio as Data, vendedor as Executivo, 'Acao de Vendas' as Tipo
 from tbacao
-where dt_inicio between %s and %s
+where dt_inicio >= %s and dt_inicio < %s
 union
 select id_condominio, created_at as Data, vendedor as Executivo, 'Ficha Cadastro' as Tipo
 from tbficha
-where created_at between %s and %s
+where created_at >= %s and created_at < %s
 union
 select id_condominio, created_at as data, vendedor as Executivo, 'Lead' as Tipo
 from tbleads
-where created_at between %s and %s
+where created_at >= %s and created_at < %s
 ) a
 left join tbusuarios u on a.executivo = u.username
 left join tb_condominio c on a.id_condominio = c.id
@@ -146,7 +147,7 @@ def acoes_consultor(periodo, consultor):
     conn = conecta_supabase()
     cursor = conn.cursor()
 
-    ultimo = periodo.replace(day=calendar.monthrange(periodo.year, periodo.month)[1])
+    ultimo = (periodo.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
 
     query = """select concat(c.nome, ' (',
             c.cidade, '-',
@@ -159,19 +160,19 @@ from
 (
 select id_condominio, dt_inicio as data, usuario as Executivo, 'Visita' as Tipo
 from tbvisita
-where dt_inicio between %s and %s
+where dt_inicio >= %s and dt_inicio < %s
 union
 select id_condominio, dt_inicio as Data, vendedor as Executivo, 'Acao de Vendas' as Tipo
 from tbacao
-where dt_inicio between %s and %s
+where dt_inicio >= %s and dt_inicio < %s
 union
 select id_condominio, created_at as Data, vendedor as Executivo, 'Ficha Cadastro' as Tipo
 from tbficha
-where created_at between %s and %s
+where created_at >= %s and created_at < %s
 union
 select id_condominio, created_at as data, vendedor as Executivo, 'Lead' as Tipo
 from tbleads
-where created_at between %s and %s
+where created_at >= %s and created_at < %s
 ) a
 left join tb_condominio c on a.id_condominio = c.id
 where a.Executivo = %s"""
@@ -194,28 +195,32 @@ def acoes_planej(periodo):
     conn = conecta_supabase()
     cursor = conn.cursor()
 
-    ultimo = periodo.replace(day=calendar.monthrange(periodo.year, periodo.month)[1])
+    ultimo = (periodo.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
 
     query = """select a.*, h.gestor_direto as gestor
 from
 (
+    select id_condominio, dt_inicio as Data, usuario as Executivo, 'Visita' as Tipo
+    from tbvisita
+    where dt_inicio >= %s and dt_inicio < %s
+    union all
     select id_condominio, dt_inicio as Data, vendedor as Executivo, 'Acao de Vendas' as Tipo
     from tbacao
-    where dt_inicio between %s and %s
-    union
+    where dt_inicio >= %s and dt_inicio < %s
+    union all
     select id_condominio, created_at as Data, vendedor as Executivo, 'Ficha Cadastro' as Tipo
     from tbficha
-    where created_at between %s and %s
-    union
+    where created_at >= %s and created_at < %s
+    union all
     select id_condominio, created_at as Data, vendedor as Executivo, 'Lead' as Tipo
     from tbleads
-    where created_at between %s and %s
+    where created_at >= %s and created_at < %s
 ) a
 left join tbusuarios u on a.executivo = u.username
 left join tbhierarquia h on u.id = h.id_usuario and h.periodo = %s
 where a.Executivo not in ('john', 'johnteste', 'vitor.horacio', 'jose.canale', 'juliana.maximo');"""
 
-    cursor.execute(query, (periodo, ultimo, periodo, ultimo, periodo, ultimo, periodo))
+    cursor.execute(query, (periodo, ultimo, periodo, ultimo, periodo, ultimo, periodo, ultimo, periodo))
     result = cursor.fetchall()
 
     df = pd.DataFrame(result, columns=[description[0] for description in cursor.description])

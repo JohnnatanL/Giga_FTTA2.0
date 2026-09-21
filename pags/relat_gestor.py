@@ -43,12 +43,27 @@ elif pills == "Relatório de Ações":
 
     cola, colb = st.columns([1, 3], vertical_alignment="bottom")
 
+    MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+            "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+         
     with cola:
-        data = st.selectbox(
+        hoje = date.today()
+        inicio = date(2026, 6, 1)  # primeiro mês com dados
+
+        # de Jun/26 até o mês atual
+        periodos = []
+        d = inicio
+        while d <= hoje:
+            periodos.append(d)
+            d = (d.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
+
+        data_ref = st.selectbox(
             "Período",
-            options=["Jun/26", "Jul/26", "Ago/26", "Set/26", "Out/26", "Nov/26", "Dez/26"],
-            index=1,
+            options=periodos,
+            index=len(periodos) - 1,  # mês atual
+            format_func=lambda d: f"{MESES[d.month - 1]}/{str(d.year)[2:]}",
         )
+        data = f"{MESES[data_ref.month - 1]}/{str(data_ref.year)[2:]}"  # usado no st.caption
 
         meses = {"Jan": 1, "Fev": 2, "Mar": 3, "Abr": 4, "Mai": 5, "Jun": 6,
                  "Jul": 7, "Ago": 8, "Set": 9, "Out": 10, "Nov": 11, "Dez": 12}
