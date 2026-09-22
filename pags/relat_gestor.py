@@ -190,10 +190,12 @@ elif pills == "Exportar Carteira":
         execs, gestores = opcoes_filtro(role, username)
         a, b = st.columns(2)
         with a:
-            executivo = st.selectbox("Executivo", execs, index=None,
+            executivo = st.selectbox("Executivo", list(execs), index=None,
+                                     format_func=lambda k: execs.get(k, k),
                                      placeholder="Todos da sua visão", key="exp_exec")
         with b:
-            gestor = st.selectbox("Gestor direto", gestores, index=None,
+            gestor = st.selectbox("Gestor direto", list(gestores), index=None,
+                                  format_func=lambda k: gestores.get(k, k),
                                   placeholder="Todos", key="exp_gestor",
                                   disabled=role == 'gestao') if gestores else None
         st.caption(f"Carteira de {mes}. Sem filtro, o arquivo sai com todos os executivos da sua visão.")
@@ -215,7 +217,7 @@ elif pills == "Exportar Carteira":
         nome = f"carteira_{mes.replace('/', '-')}"
         if executivo if role != 'consultor' else False:
             nome += "_" + str(executivo).lower().replace(" ", "-")
-        titulo = f"Carteira {mes}" + (f" · {executivo}" if role != 'consultor' and executivo else "")
+        titulo = f"Carteira {mes}" + (f" · {execs.get(executivo, executivo)}" if role != 'consultor' and executivo else "")
 
         d1, d2, _ = st.columns([1, 1, 2])
         with d1:

@@ -42,8 +42,9 @@ def _cep(v):
     return f"{d[:5]}-{d[5:]}" if len(d) == 8 else (v or "")
 
 
-def carteira_para_export(role, username, executivo=None, gestor=None):
-    """Retorna a carteira do mês atual conforme o perfil, já formatada."""
+def _carteira_bruta(role, username, executivo=None, gestor=None):
+    """Carteira do mês atual conforme o perfil, com as chaves (username) de executivo e gestor.
+    executivo/gestor são USERNAMES, não nomes de exibição."""
     where, params = [], []
     if role == "consultor":
         where.append("lower(k.vendedor) = %s")
@@ -65,7 +66,9 @@ def carteira_para_export(role, username, executivo=None, gestor=None):
                c.nome  AS nome_condominio,
                c.cidade, c.sigla_estado, c.bairro, c.logradouro, c.numero, c.cep,
                COALESCE(u.nome, k.vendedor) AS executivo,
-               COALESCE(g.nome, h.gestor_direto, '') AS gestor_direto
+               COALESCE(g.nome, h.gestor_direto, '') AS gestor_direto,
+               lower(k.vendedor) AS executivo_key,
+               lower(COALESCE(h.gestor_direto, '')) AS gestor_key
         FROM tbcarteira k
         LEFT JOIN tb_condominio c ON c.id::text = k.id_condominio::text
         LEFT JOIN tbusuarios u ON lower(u.username) = lower(k.vendedor)
@@ -77,6 +80,12 @@ def carteira_para_export(role, username, executivo=None, gestor=None):
         """,
         tuple(params),
     )
+    return df
+
+
+def carteira_para_export(role, username, executivo=None, gestor=None):
+    """Retorna a carteira do mês atual conforme o perfil, já formatada."""
+    df = _carteira_bruta(role, username, executivo, gestor)
     if df.empty:
         return pd.DataFrame(columns=COLUNAS)
 
@@ -93,12 +102,17 @@ def carteira_para_export(role, username, executivo=None, gestor=None):
 
 
 def opcoes_filtro(role, username):
-    """Executivos (e gestores, para planejamento/admin) que aparecem na carteira do mês."""
-    df = carteira_para_export(role, username)
+    """Executivos e gestores da carteira do mês, como {username: nome de exibição}.
+    O filtro usa o username (chave do banco); o nome é só para mostrar no selectbox."""
+    df = _carteira_bruta(role, username)
     if df.empty:
-        return [], []
-    execs = sorted(df.executivo.unique())
-    gestores = sorted(g for g in df.gestor_direto.unique() if g)
+        return {}, {}
+    execs = dict(sorted(
+        df[["executivo_key", "executivo"]].drop_duplicates("executivo_key").itertuples(index=False),
+        key=lambda kv: str(kv[1]).lower(),
+    ))
+    g = df[df.gestor_key != ""][["gestor_key", "gestor_direto"]].drop_duplicates("gestor_key")
+    gestores = dict(sorted(g.itertuples(index=False), key=lambda kv: str(kv[1]).lower()))
     return execs, gestores
 
 
