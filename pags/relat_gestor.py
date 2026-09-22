@@ -11,6 +11,8 @@ import json
 from time import sleep
 from datetime import date
 from controller.hidden import hidden
+from controller.carteira_export import (carteira_para_export, opcoes_filtro, para_excel,
+                                        para_pdf, mes_atual_label, TITULOS, COLUNAS)
 from stylo.tema import (aplicar_tema, cabecalho, estado_vazio, resumo_numeros,
                         cartao_executivo, bloco_chips, bloco_lista, bloco_dados, CORES)
 
@@ -25,7 +27,7 @@ aplicar_tema("relatorios")
 
 cabecalho("Relatórios", "Ações da equipe no mês e o retrato de cada condomínio da carteira.")
 
-pills = st.pills(label="Relatório", label_visibility="collapsed", options=["Ficha do Condomínio", "Relatório de Ações", "Crescimento de Base"])
+pills = st.pills(label="Relatório", label_visibility="collapsed", options=["Ficha do Condomínio", "Relatório de Ações", "Exportar Carteira", "Crescimento de Base"])
 
 COLUNAS_DETALHE = {
     "Gestor": st.column_config.TextColumn(width=160),
@@ -174,6 +176,58 @@ elif pills == "Relatório de Ações":
             st.dataframe(df_sumarizado, width="stretch", hide_index=True, column_config=COLUNAS_DETALHE)
             st.subheader("Detalhamento")
             st.dataframe(df, width="stretch", hide_index=False, column_config=COLUNAS_DETALHE)
+
+elif pills == "Exportar Carteira":
+
+    role = st.session_state['role']
+    username = st.session_state['username']
+    mes = mes_atual_label()
+
+    if role == 'consultor':
+        st.caption(f"Sua carteira de {mes}.")
+        executivo = gestor = None
+    else:
+        execs, gestores = opcoes_filtro(role, username)
+        a, b = st.columns(2)
+        with a:
+            executivo = st.selectbox("Executivo", execs, index=None,
+                                     placeholder="Todos da sua visão", key="exp_exec")
+        with b:
+            gestor = st.selectbox("Gestor direto", gestores, index=None,
+                                  placeholder="Todos", key="exp_gestor",
+                                  disabled=role == 'gestao') if gestores else None
+        st.caption(f"Carteira de {mes}. Sem filtro, o arquivo sai com todos os executivos da sua visão.")
+
+    df = carteira_para_export(role, username,
+                              executivo=None if role != 'consultor' and not executivo else executivo,
+                              gestor=None if role != 'consultor' and not gestor else gestor)
+
+    if df.empty:
+        estado_vazio("Nenhum prédio na carteira deste mês",
+                     "Fale com o planejamento se a carteira ainda não foi montada.")
+    else:
+        resumo_numeros([
+            ("Prédios", len(df), "destaque"),
+            ("Executivos", df.executivo.nunique(), CORES["ciano"]),
+            ("Período", mes, CORES["verde"]),
+        ])
+
+        nome = f"carteira_{mes.replace('/', '-')}"
+        if executivo if role != 'consultor' else False:
+            nome += "_" + str(executivo).lower().replace(" ", "-")
+        titulo = f"Carteira {mes}" + (f" · {executivo}" if role != 'consultor' and executivo else "")
+
+        d1, d2, _ = st.columns([1, 1, 2])
+        with d1:
+            st.download_button("Exportar Excel", para_excel(df, titulo), file_name=f"{nome}.xlsx",
+                               mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                               type="primary", width="stretch")
+        with d2:
+            st.download_button("Exportar PDF", para_pdf(df, titulo), file_name=f"{nome}.pdf",
+                               mime="application/pdf", width="stretch")
+
+        st.dataframe(df.rename(columns=TITULOS), width="stretch", hide_index=True,
+                     column_config={"Endereço completo": st.column_config.TextColumn(width="large")})
 
 elif pills == "Crescimento de Base":
     
