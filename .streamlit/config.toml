@@ -1,21 +1,11 @@
 [theme]
-base = "dark"
-primaryColor = "#44EE67"
-backgroundColor = "#050608"
-secondaryBackgroundColor = "#141830"
-textColor = "#EEF1FF"
-linkColor = "#6FD3F7"
-borderColor = "#222846"
-baseRadius = "10px"
-font = "Lexend:https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
-headingFont = "Lexend:https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
-
-[theme.sidebar]
-backgroundColor = "#001059"
-secondaryBackgroundColor = "#0B1D78"
-textColor = "#E6EAFF"
-primaryColor = "#44EE67"
-borderColor = "#1A2A85"
+base = "light"
+primaryColor = "#0E8A34"
+backgroundColor = "#F3F5FA"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0B1542"
+font = "Sora:https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&display=swap"
 
 [client]
 toolbarMode = "minimal"
+showSidebarNavigation = false
